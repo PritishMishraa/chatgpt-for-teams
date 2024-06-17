@@ -12,6 +12,7 @@ import { getUserAuth } from '@/lib/auth/utils'
 import TeamSwitcher from './team-switcher'
 import { getTeams } from '@/app/actions'
 import TeamSwitcherFirst from './team-switcher-first'
+import { ChatBubbleIcon } from '@radix-ui/react-icons'
 
 async function UserOrLogin() {
   const { session } = await getUserAuth()
@@ -28,8 +29,8 @@ async function UserOrLogin() {
         </>
       ) : (
         <Link href="/new" rel="nofollow">
-          <IconNextChat className="size-6 mr-2 dark:hidden" inverted />
-          <IconNextChat className="hidden size-6 mr-2 dark:block" />
+          <ChatBubbleIcon className="size-6 mr-2 dark:hidden" />
+          <ChatBubbleIcon className="hidden size-6 mr-2 dark:block" />
         </Link>
       )}
       <div className="flex items-center">

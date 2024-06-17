@@ -17,7 +17,7 @@ export default async function IndexPage() {
   const missingKeys = await getMissingKeys()
   const { user } = await validateRequest()
 
-  const credits = await getCreditsForTeam(user.currentTeamId || -1)
+  const credits = await getCreditsForTeam(user?.currentTeamId || -1)
 
   if (session == null) {
     return (

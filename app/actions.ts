@@ -10,7 +10,7 @@ import { type Chat } from '@/lib/types'
 import { kv } from '@vercel/kv'
 import jwt from 'jsonwebtoken'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { z } from 'zod'
 
 export async function getChats(userId?: string | null) {
@@ -128,7 +128,6 @@ export async function saveChat(chat: Chat) {
   const { session } = await getUserAuth()
   const { user } = await validateRequest()
   
-  
   if (session && session.user && user?.currentTeamId) {
     const pipeline = kv.pipeline()
     const teamId = user.currentTeamId
@@ -153,7 +152,6 @@ export async function saveChat(chat: Chat) {
     })
     
     await pipeline.exec()
-    revalidatePath(`/chat/${chat.id}`)
   } else {
     return
   }

@@ -8,6 +8,12 @@ import { Providers } from '@/components/providers'
 import { Header } from '@/components/header'
 import { Toaster } from '@/components/ui/sonner'
 
+export const metadata = {
+  icons: {
+    icon: '/favicon.svg',
+  }
+}
+
 export const viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },

@@ -17,9 +17,6 @@ export default async function IndexPage() {
   const missingKeys = await getMissingKeys()
   const { user } = await validateRequest()
 
-  if (!user) {
-    return redirect('/login')
-  }
   const credits = await getCreditsForTeam(user.currentTeamId || -1)
 
   if (session == null) {

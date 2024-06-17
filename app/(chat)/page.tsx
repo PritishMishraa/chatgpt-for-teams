@@ -5,10 +5,9 @@ import { getCreditsForTeam, getMissingKeys } from '@/app/actions'
 import { getUserAuth } from '@/lib/auth/utils'
 import Link from 'next/link'
 import { validateRequest } from '@/lib/auth/lucia'
-import { redirect } from 'next/navigation'
 
 export const metadata = {
-  title: 'Next.js AI Chatbot'
+  title: 'ChatGPT for Teams'
 }
 
 export default async function IndexPage() {

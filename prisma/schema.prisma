@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider              = "zod-prisma"
+  output                = "./zod"
+  relationModel         = true
+  modelCase             = "camelCase"
+  modelSuffix           = "Schema"
+  useDecimalJs          = true
+  prismaJsonNullability = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String         @id
+  name              String?
+  email             String         @unique
+  hashedPassword    String
+  isEmailVerified   Boolean        @default(false)
+  verificationToken String?
+  currentTeamId     Int?
+  teams             TeamMember[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  Team              Team[]
+  Conversation      Conversation[]
+  Message           Message[]
+  sessions          Session[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Team {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  members       TeamMember[]
+  ownerId       String
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  creditWallet  CreditWallet?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([ownerId])
+  @@map("teams")
+}
+
+model TeamMember {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    Int
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, teamId])
+  @@map("team_members")
+}
+
+model Conversation {
+  id          Int       @id @default(autoincrement())
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      Int
+  createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([teamId])
+  @@map("conversations")
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId Int
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId       String
+  content        String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+model CreditWallet {
+  id        Int      @id @default(autoincrement())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    Int      @unique
+  balance   Int      @default(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("credit_wallets")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+enum Role {
+  OWNER
+  MEMBER
+}
